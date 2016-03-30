@@ -1,0 +1,2 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"four_two.c" LINE:21
+timer_int0 DSTACK_USAGE:9 DSTACK_LEVEL:9 FILE:"four_two.c" LINE:12
