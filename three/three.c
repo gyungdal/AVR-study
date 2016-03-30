@@ -1,0 +1,34 @@
+/*
+ * three.c
+ *
+ * Created: 2016-03-29 ¿ÀÈÄ 1:59:08
+ * Author: GyungDal
+ */
+
+#include <io.h>
+#include <delay.h>  
+#include <interrupt.h>
+unsigned char i;
+
+interrupt [EXT_INT0] void external_int0(void){
+    if(i++ >= 99){
+        i= 0x00;
+    }
+    PORTA = (((i / 10) << 4) | (i % 10));
+}
+void main(void){
+EIMSK = 0x00;
+EICRA = 0x00;
+SREG = 0x80;
+DDRA = 0xff;
+DDRD = 0x00;         
+i = 0x00;
+    while(1){   /*
+        if(i >= 99){
+            i= 0x00;
+        }
+        PORTA = (((i / 10) << 4) | (i % 10));
+        delay_ms(300);*/
+    }
+}
+

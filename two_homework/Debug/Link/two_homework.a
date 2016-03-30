@@ -4,7 +4,7 @@
 ; * Created: 2016-03-23 ¿ÀÈÄ 6:10:16
 ; * Author: GyungDal
 ; */
-; #include <io.h>
+;#include <io.h>
 ;PCODE: $00000000 VOL: 0
 	#ifndef __SLEEP_DEFINED__
 ;PCODE: $00000001 VOL: 0
@@ -44,7 +44,7 @@
 ;PCODE: $00000010 VOL: 0
 ; 0000 000E     while(1){
 ;PCODE: $00000011 VOL: 0
-; 0000 000F         if(i++ >= 100){
+; 0000 000F         if(i++ >= 99){
 ;PCODE: $00000012 VOL: 0
 ;PCODE: $00000013 VOL: 0
 ;PCODE: $00000014 VOL: 0
@@ -52,7 +52,7 @@
 ; 0000 0010             i= 0x00;
 ;PCODE: $00000016 VOL: 0
 ; 0000 0011         }
-; 0000 0012         PORTA = (((i / 10) << 4) | (0x0F & (i % 10)));
+; 0000 0012         PORTA = (((i / 10) << 4) | (i % 10));
 ;PCODE: $00000017 VOL: 0
 ;PCODE: $00000018 VOL: 0
 ;PCODE: $00000019 VOL: 0
@@ -66,14 +66,13 @@
 ;PCODE: $00000021 VOL: 0
 ;PCODE: $00000022 VOL: 0
 ;PCODE: $00000023 VOL: 0
-;PCODE: $00000024 VOL: 0
 ; 0000 0013         delay_ms(300);
+;PCODE: $00000024 VOL: 0
 ;PCODE: $00000025 VOL: 0
-;PCODE: $00000026 VOL: 0
 ; 0000 0014     }
+;PCODE: $00000026 VOL: 0
 ;PCODE: $00000027 VOL: 0
-;PCODE: $00000028 VOL: 0
 ; 0000 0015 }
+;PCODE: $00000028 VOL: 0
 ;PCODE: $00000029 VOL: 0
 ;PCODE: $0000002A VOL: 0
-;PCODE: $0000002B VOL: 0

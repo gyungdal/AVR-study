@@ -1197,7 +1197,7 @@ __CLEAR_SRAM:
 ; * Created: 2016-03-23 ¿ÀÈÄ 6:10:16
 ; * Author: GyungDal
 ; */
-; #include <io.h>
+;#include <io.h>
 	#ifndef __SLEEP_DEFINED__
 	#define __SLEEP_DEFINED__
 	.EQU __se_bit=0x20
@@ -1225,15 +1225,15 @@ _main:
 	CLR  R5
 ; 0000 000E     while(1){
 _0x3:
-; 0000 000F         if(i++ >= 100){
+; 0000 000F         if(i++ >= 99){
 	MOV  R30,R5
 	INC  R5
-	CPI  R30,LOW(0x64)
+	CPI  R30,LOW(0x63)
 	BRLO _0x6
 ; 0000 0010             i= 0x00;
 	CLR  R5
 ; 0000 0011         }
-; 0000 0012         PORTA = (((i / 10) << 4) | (0x0F & (i % 10)));
+; 0000 0012         PORTA = (((i / 10) << 4) | (i % 10));
 _0x6:
 	MOV  R26,R5
 	LDI  R27,0
@@ -1248,7 +1248,6 @@ _0x6:
 	LDI  R30,LOW(10)
 	LDI  R31,HIGH(10)
 	RCALL __MODW21
-	ANDI R30,LOW(0xF)
 	OR   R30,R22
 	OUT  0x1B,R30
 ; 0000 0013         delay_ms(300);

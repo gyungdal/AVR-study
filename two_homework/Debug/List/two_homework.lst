@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.30  D:\AVR\two_homework\Debug\List\two_homework.asm Tue Mar 29 10:42:05 2016
+AVRASM ver. 2.1.30  D:\AVR\two_homework\Debug\List\two_homework.asm Tue Mar 29 15:44:42 2016
 
 D:\AVR\two_homework\Debug\List\two_homework.asm(1097): warning: Register r5 already defined by the .DEF directive
                  
@@ -1202,7 +1202,7 @@ D:\AVR\two_homework\Debug\List\two_homework.asm(1097): warning: Register r5 alre
                  ; * Created: 2016-03-23 ¿ÀÈÄ 6:10:16
                  ; * Author: GyungDal
                  ; */
-                 ; #include <io.h>
+                 ;#include <io.h>
                  	#ifndef __SLEEP_DEFINED__
                  	#define __SLEEP_DEFINED__
                  	.EQU __se_bit=0x20
@@ -1230,21 +1230,21 @@ D:\AVR\two_homework\Debug\List\two_homework.asm(1097): warning: Register r5 alre
 000066 2455      	CLR  R5
                  ; 0000 000E     while(1){
                  _0x3:
-                 ; 0000 000F         if(i++ >= 100){
+                 ; 0000 000F         if(i++ >= 99){
 000067 2de5      	MOV  R30,R5
 000068 9453      	INC  R5
-000069 36e4      	CPI  R30,LOW(0x64)
+000069 36e3      	CPI  R30,LOW(0x63)
 00006a f008      	BRLO _0x6
                  ; 0000 0010             i= 0x00;
 00006b 2455      	CLR  R5
                  ; 0000 0011         }
-                 ; 0000 0012         PORTA = (((i / 10) << 4) | (0x0F & (i % 10)));
+                 ; 0000 0012         PORTA = (((i / 10) << 4) | (i % 10));
                  _0x6:
 00006c 2da5      	MOV  R26,R5
 00006d e0b0      	LDI  R27,0
 00006e e0ea      	LDI  R30,LOW(10)
 00006f e0f0      	LDI  R31,HIGH(10)
-000070 d027      	RCALL __DIVW21
+000070 d026      	RCALL __DIVW21
 000071 95e2      	SWAP R30
 000072 7fe0      	ANDI R30,0xF0
 000073 2f6e      	MOV  R22,R30
@@ -1252,19 +1252,18 @@ D:\AVR\two_homework\Debug\List\two_homework.asm(1097): warning: Register r5 alre
 000075 27bb      	CLR  R27
 000076 e0ea      	LDI  R30,LOW(10)
 000077 e0f0      	LDI  R31,HIGH(10)
-000078 d024      	RCALL __MODW21
-000079 70ef      	ANDI R30,LOW(0xF)
-00007a 2be6      	OR   R30,R22
-00007b bbeb      	OUT  0x1B,R30
+000078 d023      	RCALL __MODW21
+000079 2be6      	OR   R30,R22
+00007a bbeb      	OUT  0x1B,R30
                  ; 0000 0013         delay_ms(300);
-00007c e2ac      	LDI  R26,LOW(300)
-00007d e0b1      	LDI  R27,HIGH(300)
-00007e d03a      	RCALL _delay_ms
+00007b e2ac      	LDI  R26,LOW(300)
+00007c e0b1      	LDI  R27,HIGH(300)
+00007d d03a      	RCALL _delay_ms
                  ; 0000 0014     }
-00007f cfe7      	RJMP _0x3
+00007e cfe8      	RJMP _0x3
                  ; 0000 0015 }
                  _0x7:
-000080 cfff      	RJMP _0x7
+00007f cfff      	RJMP _0x7
                  ; .FEND
                  
                  	.CSEG
@@ -1272,95 +1271,95 @@ D:\AVR\two_homework\Debug\List\two_homework.asm(1097): warning: Register r5 alre
                  
                  	.CSEG
                  __ANEGW1:
-000081 95f1      	NEG  R31
-000082 95e1      	NEG  R30
-000083 40f0      	SBCI R31,0
-000084 9508      	RET
+000080 95f1      	NEG  R31
+000081 95e1      	NEG  R30
+000082 40f0      	SBCI R31,0
+000083 9508      	RET
                  
                  __DIVW21U:
-000085 2400      	CLR  R0
-000086 2411      	CLR  R1
-000087 e190      	LDI  R25,16
+000084 2400      	CLR  R0
+000085 2411      	CLR  R1
+000086 e190      	LDI  R25,16
                  __DIVW21U1:
-000088 0faa      	LSL  R26
-000089 1fbb      	ROL  R27
-00008a 1c00      	ROL  R0
-00008b 1c11      	ROL  R1
-00008c 1a0e      	SUB  R0,R30
-00008d 0a1f      	SBC  R1,R31
-00008e f418      	BRCC __DIVW21U2
-00008f 0e0e      	ADD  R0,R30
-000090 1e1f      	ADC  R1,R31
-000091 c001      	RJMP __DIVW21U3
+000087 0faa      	LSL  R26
+000088 1fbb      	ROL  R27
+000089 1c00      	ROL  R0
+00008a 1c11      	ROL  R1
+00008b 1a0e      	SUB  R0,R30
+00008c 0a1f      	SBC  R1,R31
+00008d f418      	BRCC __DIVW21U2
+00008e 0e0e      	ADD  R0,R30
+00008f 1e1f      	ADC  R1,R31
+000090 c001      	RJMP __DIVW21U3
                  __DIVW21U2:
-000092 60a1      	SBR  R26,1
+000091 60a1      	SBR  R26,1
                  __DIVW21U3:
-000093 959a      	DEC  R25
-000094 f799      	BRNE __DIVW21U1
-000095 01fd      	MOVW R30,R26
-000096 01d0      	MOVW R26,R0
-000097 9508      	RET
+000092 959a      	DEC  R25
+000093 f799      	BRNE __DIVW21U1
+000094 01fd      	MOVW R30,R26
+000095 01d0      	MOVW R26,R0
+000096 9508      	RET
                  
                  __DIVW21:
-000098 d012      	RCALL __CHKSIGNW
-000099 dfeb      	RCALL __DIVW21U
-00009a f40e      	BRTC __DIVW211
-00009b dfe5      	RCALL __ANEGW1
+000097 d012      	RCALL __CHKSIGNW
+000098 dfeb      	RCALL __DIVW21U
+000099 f40e      	BRTC __DIVW211
+00009a dfe5      	RCALL __ANEGW1
                  __DIVW211:
-00009c 9508      	RET
+00009b 9508      	RET
                  
                  __MODW21:
-00009d 94e8      	CLT
-00009e ffb7      	SBRS R27,7
-00009f c004      	RJMP __MODW211
-0000a0 95b1      	NEG  R27
-0000a1 95a1      	NEG  R26
-0000a2 40b0      	SBCI R27,0
-0000a3 9468      	SET
+00009c 94e8      	CLT
+00009d ffb7      	SBRS R27,7
+00009e c004      	RJMP __MODW211
+00009f 95b1      	NEG  R27
+0000a0 95a1      	NEG  R26
+0000a1 40b0      	SBCI R27,0
+0000a2 9468      	SET
                  __MODW211:
-0000a4 fdf7      	SBRC R31,7
-0000a5 dfdb      	RCALL __ANEGW1
-0000a6 dfde      	RCALL __DIVW21U
-0000a7 01fd      	MOVW R30,R26
-0000a8 f40e      	BRTC __MODW212
-0000a9 dfd7      	RCALL __ANEGW1
+0000a3 fdf7      	SBRC R31,7
+0000a4 dfdb      	RCALL __ANEGW1
+0000a5 dfde      	RCALL __DIVW21U
+0000a6 01fd      	MOVW R30,R26
+0000a7 f40e      	BRTC __MODW212
+0000a8 dfd7      	RCALL __ANEGW1
                  __MODW212:
-0000aa 9508      	RET
+0000a9 9508      	RET
                  
                  __CHKSIGNW:
-0000ab 94e8      	CLT
-0000ac fff7      	SBRS R31,7
-0000ad c002      	RJMP __CHKSW1
-0000ae dfd2      	RCALL __ANEGW1
-0000af 9468      	SET
+0000aa 94e8      	CLT
+0000ab fff7      	SBRS R31,7
+0000ac c002      	RJMP __CHKSW1
+0000ad dfd2      	RCALL __ANEGW1
+0000ae 9468      	SET
                  __CHKSW1:
-0000b0 ffb7      	SBRS R27,7
-0000b1 c006      	RJMP __CHKSW2
-0000b2 95b1      	NEG  R27
-0000b3 95a1      	NEG  R26
-0000b4 40b0      	SBCI R27,0
-0000b5 f800      	BLD  R0,0
-0000b6 9403      	INC  R0
-0000b7 fa00      	BST  R0,0
+0000af ffb7      	SBRS R27,7
+0000b0 c006      	RJMP __CHKSW2
+0000b1 95b1      	NEG  R27
+0000b2 95a1      	NEG  R26
+0000b3 40b0      	SBCI R27,0
+0000b4 f800      	BLD  R0,0
+0000b5 9403      	INC  R0
+0000b6 fa00      	BST  R0,0
                  __CHKSW2:
-0000b8 9508      	RET
+0000b7 9508      	RET
                  
                  _delay_ms:
-0000b9 9610      	adiw r26,0
-0000ba f039      	breq __delay_ms1
+0000b8 9610      	adiw r26,0
+0000b9 f039      	breq __delay_ms1
                  __delay_ms0:
-0000bb 95a8      	wdr
+0000ba 95a8      	wdr
                 +
-0000bc ea80     +LDI R24 , LOW ( 0xFA0 )
-0000bd e09f     +LDI R25 , HIGH ( 0xFA0 )
+0000bb ea80     +LDI R24 , LOW ( 0xFA0 )
+0000bc e09f     +LDI R25 , HIGH ( 0xFA0 )
                 +__DELAY_USW_LOOP :
-0000be 9701     +SBIW R24 , 1
-0000bf f7f1     +BRNE __DELAY_USW_LOOP
+0000bd 9701     +SBIW R24 , 1
+0000be f7f1     +BRNE __DELAY_USW_LOOP
                  	__DELAY_USW 0xFA0
-0000c0 9711      	sbiw r26,1
-0000c1 f7c9      	brne __delay_ms0
+0000bf 9711      	sbiw r26,1
+0000c0 f7c9      	brne __delay_ms0
                  __delay_ms1:
-0000c2 9508      	ret
+0000c1 9508      	ret
                  
                  ;END OF CODE MARKER
                  __END_OF_CODE:
@@ -1384,13 +1383,13 @@ ATmega128 register use summary:
 r0 :   8 r1 :   4 r2 :   0 r3 :   0 r4 :   0 r5 :   6 r6 :   0 r7 :   0 
 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 r13:   0 r14:   0 r15:   0 
 r16:   0 r17:   0 r18:   0 r19:   0 r20:   0 r21:   0 r22:   2 r23:   0 
-r24:   7 r25:   4 r26:  14 r27:  12 r28:   1 r29:   1 r30:  27 r31:  10 
+r24:   7 r25:   4 r26:  14 r27:  12 r28:   1 r29:   1 r30:  26 r31:  10 
 x  :   2 y  :   0 z  :   0 
 Registers used: 13 out of 35 (37.1%)
 
 ATmega128 instruction use summary:
 .lds  :   0 .lds.l:   0 .sts  :   0 .sts.l:   0 adc   :   1 add   :   1 
-adiw  :   1 and   :   0 andi  :   2 asr   :   0 bclr  :   0 bld   :   1 
+adiw  :   1 and   :   0 andi  :   1 asr   :   0 bclr  :   0 bld   :   1 
 brbc  :   0 brbs  :   0 brcc  :   1 brcs  :   0 break :   0 breq  :   1 
 brge  :   0 brhc  :   0 brhs  :   0 brid  :   0 brie  :   0 brlo  :   1 
 brlt  :   0 brmi  :   0 brne  :   5 brpl  :   0 brsh  :   0 brtc  :   2 
@@ -1414,7 +1413,7 @@ Instructions used: 41 out of 117 (35.0%)
 ATmega128 memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000186    390      0    390  131072   0.3%
+[.cseg] 0x000000 0x000184    388      0    388  131072   0.3%
 [.dseg] 0x000100 0x000500      0      0      0    4096   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    4096   0.0%
 
