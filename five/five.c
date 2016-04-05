@@ -5,27 +5,35 @@
  * Author: GyungDal
  */
 
-
+//Header
 #include <io.h>
 #include <delay.h>  
 #include <interrupt.h>
+
+//Time value 00 ~ 99
 unsigned char i;
+
+//Button Interrupt
 interrupt [EXT_INT0] void external_int0(void){
    if(TIMSK == 0x02){ 
         TIMSK = 0x00;
    }else TIMSK = 0x02;
 }
+
+//Timer Interrupt 
 interrupt [TIM0_COMP] void timer(void){
          if(i++ >= 99){
             i= 0x00;
         }
         PORTA = (((i / 10) << 4) | (i % 10));
 }
+
+//Main Initial work
 void main(void){
     DDRA = 0xff;        //PAx 포트 전부 출력포트 설정
     DDRD = 0x00;        //PDx 포트 전부 입력포트 설정
     EIMSK = 0x01;        //PD0 포트 인터럽트 Enable
-    EICRA = 0x02;        //PD0 하강시 실행
+    EICRA = 0x03;        //PD0 하강시 실행
     SREG = 0x80;        //인터럽트 활성
     TIMSK = 0x02;       //타이머 인터럽트 Enable
     TCNT0 = 0x00;       //타이머/카운터0 레지스터 초기값

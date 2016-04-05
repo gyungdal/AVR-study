@@ -1104,7 +1104,10 @@ __START_OF_CODE:
 
 ;INTERRUPT VECTORS
 	JMP  __RESET
-	JMP  _external_int0
+	JMP  _button0
+	JMP  _button1
+	JMP  _button2
+	JMP  _button3
 	JMP  0x00
 	JMP  0x00
 	JMP  0x00
@@ -1116,9 +1119,6 @@ __START_OF_CODE:
 	JMP  0x00
 	JMP  0x00
 	JMP  0x00
-	JMP  0x00
-	JMP  0x00
-	JMP  _timer
 	JMP  0x00
 	JMP  0x00
 	JMP  0x00
@@ -1192,11 +1192,13 @@ __CLEAR_SRAM:
 
 	.CSEG
 ;/*
-; * five.c
+; * five_two.c
 ; *
-; * Created: 2016-04-05 오후 1:49:19
+; * Created: 2016-04-05 오후 4:06:44
 ; * Author: GyungDal
 ; */
+;
+;
 ;
 ;//Header
 ;#include <io.h>
@@ -1218,62 +1220,102 @@ __CLEAR_SRAM:
 ;//Time value 00 ~ 99
 ;unsigned char i;
 ;
-;//Button Interrupt
-;interrupt [EXT_INT0] void external_int0(void){
-; 0000 0011 interrupt [2] void external_int0(void){
+;//Button0 Interrupt
+;interrupt [EXT_INT0] void button0(void){
+; 0000 0013 interrupt [2] void button0(void){
 
 	.CSEG
-_external_int0:
-; .FSTART _external_int0
-	ST   -Y,R30
-	IN   R30,SREG
-	ST   -Y,R30
-; 0000 0012    if(TIMSK == 0x02){
-	IN   R30,0x37
-	CPI  R30,LOW(0x2)
-	BRNE _0x4
-; 0000 0013         TIMSK = 0x00;
-	LDI  R30,LOW(0)
-	RJMP _0x8
-; 0000 0014    }else TIMSK = 0x02;
-_0x4:
-	LDI  R30,LOW(2)
-_0x8:
-	OUT  0x37,R30
-; 0000 0015 }
-	LD   R30,Y+
-	OUT  SREG,R30
-	LD   R30,Y+
-	RETI
+_button0:
+; .FSTART _button0
+	RCALL SUBOPT_0x0
+; 0000 0014     for(i = 1;i<10;i++){
+	LDI  R30,LOW(1)
+	MOV  R5,R30
+_0x5:
+	LDI  R30,LOW(10)
+	CP   R5,R30
+	BRSH _0x6
+; 0000 0015          PORTA = (((i / 10) << 4) | (i % 10));
+	RCALL SUBOPT_0x1
+; 0000 0016          delay_ms(100);
+; 0000 0017     }
+	INC  R5
+	RJMP _0x5
+_0x6:
+; 0000 0018 }
+	RJMP _0x11
 ; .FEND
 ;
-;//Timer Interrupt
-;interrupt [TIM0_COMP] void timer(void){
-; 0000 0018 interrupt [16] void timer(void){
-_timer:
-; .FSTART _timer
-	ST   -Y,R0
-	ST   -Y,R1
-	ST   -Y,R22
-	ST   -Y,R25
-	ST   -Y,R26
-	ST   -Y,R27
-	ST   -Y,R30
-	ST   -Y,R31
-	IN   R30,SREG
-	ST   -Y,R30
-; 0000 0019          if(i++ >= 99){
-	MOV  R30,R5
-	INC  R5
-	CPI  R30,LOW(0x63)
-	BRLO _0x6
-; 0000 001A             i= 0x00;
-	CLR  R5
-; 0000 001B         }
-; 0000 001C         PORTA = (((i / 10) << 4) | (i % 10));
-_0x6:
+;//Button1 Interrupt
+;interrupt [EXT_INT1] void button1(void){
+; 0000 001B interrupt [3] void button1(void){
+_button1:
+; .FSTART _button1
 	RCALL SUBOPT_0x0
-; 0000 001D }
+; 0000 001C     for(i = 11;i<20;i++){
+	LDI  R30,LOW(11)
+	MOV  R5,R30
+_0x8:
+	LDI  R30,LOW(20)
+	CP   R5,R30
+	BRSH _0x9
+; 0000 001D          PORTA = (((i / 10) << 4) | (i % 10));
+	RCALL SUBOPT_0x1
+; 0000 001E          delay_ms(100);
+; 0000 001F     }
+	INC  R5
+	RJMP _0x8
+_0x9:
+; 0000 0020 }
+	RJMP _0x11
+; .FEND
+;
+;//Button2 Interrupt
+;interrupt [EXT_INT2] void button2(void){
+; 0000 0023 interrupt [4] void button2(void){
+_button2:
+; .FSTART _button2
+	RCALL SUBOPT_0x0
+; 0000 0024     for(i = 21;i<30;i++){
+	LDI  R30,LOW(21)
+	MOV  R5,R30
+_0xB:
+	LDI  R30,LOW(30)
+	CP   R5,R30
+	BRSH _0xC
+; 0000 0025          PORTA = (((i / 10) << 4) | (i % 10));
+	RCALL SUBOPT_0x1
+; 0000 0026          delay_ms(100);
+; 0000 0027     }
+	INC  R5
+	RJMP _0xB
+_0xC:
+; 0000 0028 }
+	RJMP _0x11
+; .FEND
+;
+;//Button3 Interrupt
+;interrupt [EXT_INT3] void button3(void){
+; 0000 002B interrupt [5] void button3(void){
+_button3:
+; .FSTART _button3
+	RCALL SUBOPT_0x0
+; 0000 002C     for(i = 31;i<40;i++){
+	LDI  R30,LOW(31)
+	MOV  R5,R30
+_0xE:
+	LDI  R30,LOW(40)
+	CP   R5,R30
+	BRSH _0xF
+; 0000 002D          PORTA = (((i / 10) << 4) | (i % 10));
+	RCALL SUBOPT_0x1
+; 0000 002E          delay_ms(100);
+; 0000 002F     }
+	INC  R5
+	RJMP _0xE
+_0xF:
+; 0000 0030 }
+_0x11:
 	LD   R30,Y+
 	OUT  SREG,R30
 	LD   R31,Y+
@@ -1281,56 +1323,37 @@ _0x6:
 	LD   R27,Y+
 	LD   R26,Y+
 	LD   R25,Y+
+	LD   R24,Y+
+	LD   R23,Y+
 	LD   R22,Y+
+	LD   R15,Y+
 	LD   R1,Y+
 	LD   R0,Y+
 	RETI
 ; .FEND
-;
 ;//Main Initial work
 ;void main(void){
-; 0000 0020 void main(void){
+; 0000 0032 void main(void){
 _main:
 ; .FSTART _main
-; 0000 0021     DDRA = 0xff;        //PAx 포트 전부 출력포트 설정
+; 0000 0033     DDRA = 0xff;        //PAx 포트 전부 출력포트 설정
 	LDI  R30,LOW(255)
 	OUT  0x1A,R30
-; 0000 0022     DDRD = 0x00;        //PDx 포트 전부 입력포트 설정
+; 0000 0034     DDRD = 0x00;        //PDx 포트 전부 입력포트 설정
 	LDI  R30,LOW(0)
 	OUT  0x11,R30
-; 0000 0023     EIMSK = 0x01;        //PD0 포트 인터럽트 Enable
-	LDI  R30,LOW(1)
+; 0000 0035     EIMSK = 0x0f;        //PD0 포트 인터럽트 Enable
+	LDI  R30,LOW(15)
 	OUT  0x39,R30
-; 0000 0024     EICRA = 0x03;        //PD0 하강시 실행
-	LDI  R30,LOW(3)
+; 0000 0036     EICRA = 0xff;        //PD0 하강시 실행
+	LDI  R30,LOW(255)
 	STS  106,R30
-; 0000 0025     SREG = 0x80;        //인터럽트 활성
+; 0000 0037     SREG = 0x80;        //인터럽트 활성
 	LDI  R30,LOW(128)
 	OUT  0x3F,R30
-; 0000 0026     TIMSK = 0x02;       //타이머 인터럽트 Enable
-	LDI  R30,LOW(2)
-	OUT  0x37,R30
-; 0000 0027     TCNT0 = 0x00;       //타이머/카운터0 레지스터 초기값
-	LDI  R30,LOW(0)
-	OUT  0x32,R30
-; 0000 0028     TCCR0 = 0x0f;       //CTC모드, 1024분주
-	LDI  R30,LOW(15)
-	OUT  0x33,R30
-; 0000 0029     OCR0 = 155;         //출력비교 레지스터값(9.98ms)
-	LDI  R30,LOW(155)
-	OUT  0x31,R30
-; 0000 002A     i = 0x00;
+; 0000 0038     i = 0x00;
 	CLR  R5
-; 0000 002B     PORTA = (((i / 10) << 4) | (i % 10));
-	RCALL SUBOPT_0x0
-; 0000 002C }
-_0x7:
-	RJMP _0x7
-; .FEND
-
-	.CSEG
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:12 WORDS
-SUBOPT_0x0:
+; 0000 0039     PORTA = (((i / 10) << 4) | (i % 10));
 	MOV  R26,R5
 	LDI  R27,0
 	LDI  R30,LOW(10)
@@ -1346,7 +1369,49 @@ SUBOPT_0x0:
 	RCALL __MODW21
 	OR   R30,R22
 	OUT  0x1B,R30
+; 0000 003A }
+_0x10:
+	RJMP _0x10
+; .FEND
+
+	.CSEG
+;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:34 WORDS
+SUBOPT_0x0:
+	ST   -Y,R0
+	ST   -Y,R1
+	ST   -Y,R15
+	ST   -Y,R22
+	ST   -Y,R23
+	ST   -Y,R24
+	ST   -Y,R25
+	ST   -Y,R26
+	ST   -Y,R27
+	ST   -Y,R30
+	ST   -Y,R31
+	IN   R30,SREG
+	ST   -Y,R30
 	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:49 WORDS
+SUBOPT_0x1:
+	MOV  R26,R5
+	LDI  R27,0
+	LDI  R30,LOW(10)
+	LDI  R31,HIGH(10)
+	RCALL __DIVW21
+	SWAP R30
+	ANDI R30,0xF0
+	MOV  R22,R30
+	MOV  R26,R5
+	CLR  R27
+	LDI  R30,LOW(10)
+	LDI  R31,HIGH(10)
+	RCALL __MODW21
+	OR   R30,R22
+	OUT  0x1B,R30
+	LDI  R26,LOW(100)
+	LDI  R27,0
+	RJMP _delay_ms
 
 ;RUNTIME LIBRARY
 
@@ -1424,6 +1489,17 @@ __CHKSW1:
 	BST  R0,0
 __CHKSW2:
 	RET
+
+_delay_ms:
+	adiw r26,0
+	breq __delay_ms1
+__delay_ms0:
+	wdr
+	__DELAY_USW 0xFA0
+	sbiw r26,1
+	brne __delay_ms0
+__delay_ms1:
+	ret
 
 ;END OF CODE MARKER
 __END_OF_CODE:
