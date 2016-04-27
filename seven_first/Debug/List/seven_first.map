@@ -1,0 +1,25 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+FUNCTION_SET                                                                      R5           1
+ENTRY_SET                                                                         R4           1
+DISPLAY_SET                                                                       R7           1
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+portSet                                                                           0x00083      7
+instructionSet                                                                    0x0008A     10
+charPosition                                                                      0x00094     32
+charDisplay                                                                       0x000B4     17
+stringDisplay                                                                     0x000C5     15
+initLCD                                                                           0x000D4     10
+main                                                                              0x000DE     15
