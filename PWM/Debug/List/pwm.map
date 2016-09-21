@@ -1,0 +1,26 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+_base_y (lcd.lib)                                                                 0x0500       4
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+value                                                                             R4,R5        2
+key                                                                               R6,R7        2
+_lcd_x                                                                            R9           1
+_lcd_y                                                                            R8           1
+_lcd_maxx                                                                         R11          1
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+SetTimer1                                                                         0x00084     11
+SetTimer3                                                                         0x0008F     17
+main                                                                              0x000A0     78
+_lcd_delay_G100                                                                   0x000EE      4
+_lcd_ready                                                                        0x000F2     17

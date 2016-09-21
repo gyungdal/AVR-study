@@ -1,0 +1,11 @@
+VERSION:3 SOURCE_TIMESTAMP:491F608C
+NODE:I LEVEL:0 LINE:8 "C:\cvavreval\inc\io.h"
+NODE:I LEVEL:0 LINE:9 "C:\cvavreval\inc\delay.h"
+NODE:I LEVEL:0 LINE:10 "C:\cvavreval\inc\lcd.h"
+NODE:I LEVEL:0 LINE:11 "C:\cvavreval\inc\stdio.h"
+NODE:F LEVEL:0 LINE:17 "SetTimer1(int A,int B)"
+NODE:F LEVEL:0 LINE:24 "SetTimer3(int A,int B)"
+NODE:V LEVEL:0 LINE:31 "str_value -> RAM:????"
+NODE:V LEVEL:0 LINE:32 "value -> R4,R5"
+NODE:V LEVEL:0 LINE:32 "key -> R6,R7"
+NODE:F LEVEL:0 LINE:33 "main(void)"

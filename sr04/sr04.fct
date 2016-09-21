@@ -1,0 +1,5 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"sr04.c" LINE:21
+sprintf DSTACK_USAGE:16 DSTACK_LEVEL:16 FILE:"C:\cvavreval\lib\stdio.lib" LINE:1489
+_print DSTACK_USAGE:20 DSTACK_LEVEL:36 FILE:"C:\cvavreval\lib\stdio.lib" LINE:560
+strlen DSTACK_USAGE:2 DSTACK_LEVEL:38 FILE:"C:\cvavreval\lib\string.lib" LINE:1722
+timer_int0 DSTACK_USAGE:7 DSTACK_LEVEL:45 FILE:"sr04.c" LINE:51

@@ -1,0 +1,122 @@
+;/*
+; * time.c
+; *
+; * Created: 2016-06-07 오후 3:08:19
+; * Author: 김경식007
+; */
+;
+;/*
+; * five.c
+; *
+; * Created: 2016-04-05 오후 1:49:19
+; * Author: GyungDal
+; */
+;
+;//Header
+;#include <io.h>
+;PCODE: $00000000 VOL: 0
+	#ifndef __SLEEP_DEFINED__
+;PCODE: $00000001 VOL: 0
+	#define __SLEEP_DEFINED__
+;PCODE: $00000002 VOL: 0
+	.EQU __se_bit=0x20
+;PCODE: $00000003 VOL: 0
+	.EQU __sm_mask=0x1C
+;PCODE: $00000004 VOL: 0
+	.EQU __sm_powerdown=0x10
+;PCODE: $00000005 VOL: 0
+	.EQU __sm_powersave=0x18
+;PCODE: $00000006 VOL: 0
+	.EQU __sm_standby=0x14
+;PCODE: $00000007 VOL: 0
+	.EQU __sm_ext_standby=0x1C
+;PCODE: $00000008 VOL: 0
+	.EQU __sm_adc_noise_red=0x08
+;PCODE: $00000009 VOL: 0
+	.SET power_ctrl_reg=mcucr
+;PCODE: $0000000A VOL: 0
+	#endif
+;PCODE: $0000000B VOL: 0
+;PCODE: $0000000C VOL: 0
+;#include <delay.h>
+;#include <interrupt.h>
+;	flags -> R17
+;
+;//Time value 00 ~ 99
+;unsigned char i, num;
+;
+;//Timer Interrupt
+;interrupt [TIM0_COMP] void timer(void){
+; 0000 0018 interrupt [16] void timer(void){
+
+	.CSEG
+;PCODE: $0000000D VOL: 0
+;PCODE: $0000000E VOL: 0
+; 0000 0019         if(i++ >= 50){
+;PCODE: $0000000F VOL: 0
+;PCODE: $00000010 VOL: 0
+;PCODE: $00000011 VOL: 0
+;PCODE: $00000012 VOL: 0
+; 0000 001A             if(num++ > 10)
+;PCODE: $00000013 VOL: 0
+;PCODE: $00000014 VOL: 0
+;PCODE: $00000015 VOL: 0
+;PCODE: $00000016 VOL: 0
+; 0000 001B                 num = 0x00;
+;PCODE: $00000017 VOL: 0
+; 0000 001C             i= 0x00;
+;PCODE: $00000018 VOL: 0
+;PCODE: $00000019 VOL: 0
+; 0000 001D         }
+; 0000 001E         PORTA = num;
+;PCODE: $0000001A VOL: 0
+;PCODE: $0000001B VOL: 0
+;PCODE: $0000001C VOL: 0
+; 0000 001F }
+;PCODE: $0000001D VOL: 0
+;PCODE: $0000001E VOL: 0
+;PCODE: $0000001F VOL: 0
+;
+;//Main Initial work
+;void main(void){
+; 0000 0022 void main(void){
+;PCODE: $00000020 VOL: 0
+; 0000 0023     DDRA = 0xff;        //PAx 포트 전부 출력포트 설정
+;PCODE: $00000021 VOL: 0
+;PCODE: $00000022 VOL: 0
+; 0000 0024     SREG = 0x80;        //인터럽트 활성
+;PCODE: $00000023 VOL: 0
+;PCODE: $00000024 VOL: 0
+; 0000 0025     TIMSK = 0x02;       //타이머 인터럽트 Enable
+;PCODE: $00000025 VOL: 0
+;PCODE: $00000026 VOL: 0
+; 0000 0026     TCNT0 = 0x00;       //타이머/카운터0 레지스터 초기값
+;PCODE: $00000027 VOL: 0
+;PCODE: $00000028 VOL: 0
+; 0000 0027     TCCR0 = 0x0f;       //CTC모드, 1024분주
+;PCODE: $00000029 VOL: 0
+;PCODE: $0000002A VOL: 0
+; 0000 0028     OCR0 = 155;         //출력비교 레지스터값(9.98ms)
+;PCODE: $0000002B VOL: 0
+;PCODE: $0000002C VOL: 0
+; 0000 0029     num = i = 0x00;
+;PCODE: $0000002D VOL: 0
+;PCODE: $0000002E VOL: 0
+;PCODE: $0000002F VOL: 0
+; 0000 002A     PORTA = (((i / 10) << 4) | (i % 10));
+;PCODE: $00000030 VOL: 0
+;PCODE: $00000031 VOL: 0
+;PCODE: $00000032 VOL: 0
+;PCODE: $00000033 VOL: 0
+;PCODE: $00000034 VOL: 0
+;PCODE: $00000035 VOL: 0
+;PCODE: $00000036 VOL: 0
+;PCODE: $00000037 VOL: 0
+;PCODE: $00000038 VOL: 0
+;PCODE: $00000039 VOL: 0
+;PCODE: $0000003A VOL: 0
+;PCODE: $0000003B VOL: 0
+; 0000 002B }
+;PCODE: $0000003C VOL: 0
+;PCODE: $0000003D VOL: 0
+;PCODE: $0000003E VOL: 0

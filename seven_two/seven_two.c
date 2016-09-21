@@ -3,75 +3,52 @@
  *
  * Created: 2016-04-20 오전 10:37:25
  * Author: GyungDal
- */
+ */                                     
+ /*
+ #include <io.h>
+#include <delay.h>  
+#include <interrupt.h>
 
-#include <io.h>
-#include <lcd.h>
-#include <delay.h>
-#include <stdio.h>
+//Time value 00 ~ 99
+unsigned char i, num;
+              //  COMP
+//Timer Interrupt 
+interrupt [TIM0_OVF] void timer(void){
+    TCNT0 = 0x00;
+    if(i++ == 31){
+        if(num++ > 10) {
+            num = 0x00; 
+        }
+        PORTA = num;
+        i = 0x00;
+    }
+}                       
 
-#asm
-    .equ __lcd_port = 0x12
-#endasm
-
-unsigned char key(void);
-void key_scan(void);
-unsigned char key_value;                                                                        
-
+//Main Initial work
 void main(void){
-    unsigned char sbuf[10];
-    DDRA = 0x0f;
-    SFIOR = 0x00;
-    PORTA = 0xff;
-    lcd_init(16);
-    lcd_gotoxy(0,0);
-    lcd_puts("4x4 Keypad");
-    lcd_gotoxy(0,1);
-    
+    i = num = 0x00;        
+    DDRA = 0xff;        //PAx 포트 전부 출력포트 설정
+    TIMSK = 0x01;
+    TCCR0 = 0x07;
+    TCNT0 = 0x00;
+    SREG = 0x80;
     while(1){
-        key_scan();
-        if(key_value != 0xf0){
-            sprintf(sbuf, "%d", key_value);
-            lcd_puts(sbuf);       
-        }
+        //Somethine?
     }
-}
-
-unsigned char key(void){
-    unsigned char a, key_buf;
-    unsigned char row = 0xfe;
-    PORTA = 0xff;
-    for(a = 0;a<4;a++){
-        PORTA = row;
-        delay_us(20);
-        key_buf = PINA;
-        switch(PINA){
-            case 0xd7 : key_buf = 0x00; break;
-            case 0xee : key_buf = 0x01; break;
-            case 0xde : key_buf = 0x02; break;
-            case 0xbe : key_buf = 0x03; break;
-            case 0xed : key_buf = 0x04; break;
-            case 0xdd : key_buf = 0x05; break;
-            case 0xbd : key_buf = 0x06; break;
-            case 0xeb : key_buf = 0x07; break;
-            case 0xdb : key_buf = 0x08; break;
-            case 0xbb : key_buf = 0x09; break;
-            case 0x7e : key_buf = 0x0a; break;
-            case 0x7d : key_buf = 0x0b; break;
-            case 0x7b : key_buf = 0x0c; break;
-            case 0x77 : key_buf = 0x0d; break;
-            case 0xe7 : key_buf = 0x0f; break;
-            case 0xb7 : key_buf = 0x10; break;
-        }
-        if(key_buf != 0xf0) return key_buf;
-        row =(row<<1)|0x01;
+}  
+*/
+#include <io.h>
+int value;
+void main(void){
+    DDRA = 0xff;
+    ADCSRA = 0x87;
+    ADMUX = 0x00;
+    while(1){
+        ADCSRA = 0xC7;
+        ADCSRA = ADCSRA | 0x40;
+        while((ADCSRA & 0x10) == 0);
+        value = (int)ADCL + ((int)ADCH<<8);
+        value = (value / 103);
+        PORTA = value % 10;
     }
-    return key_buf;
-}
-
-void key_scan(void){
-    key_value = key();
-    if(key_value != 0xf0){
-        while(key() != 0xf0);
-    }
-}
+}              

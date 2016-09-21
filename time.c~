@@ -1,0 +1,17 @@
+/*
+ * time.c
+ *
+ * Created: 2016-06-07 오후 3:08:19
+ * Author: 김경식007
+ */
+
+#include <io.h>
+
+void main(void)
+{
+while (1)
+    {
+    // Please write your application code here
+
+    }
+}
