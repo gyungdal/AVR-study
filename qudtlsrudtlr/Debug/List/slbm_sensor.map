@@ -3,10 +3,11 @@ Variable                                                                        
 ------------------------------------------------------------------------------------------------
 key                                                                               0x050E       2
 Info                                                                              0x0510      16
-_base_y (lcd.lib)                                                                 0x0520       4
-_lcd_x                                                                            0x0524       1
-_lcd_y                                                                            0x0525       1
-_lcd_maxx                                                                         0x0526       1
+arrow                                                                             0x0520       1
+_base_y (lcd.lib)                                                                 0x0521       4
+_lcd_x                                                                            0x0525       1
+_lcd_y                                                                            0x0526       1
+_lcd_maxx                                                                         0x0527       1
 
 EEPROM Allocation [bytes]
 Variable                                                                          Address   Size
@@ -24,25 +25,25 @@ speed                                                                           
 FLASH Allocation [words]
 Function                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
-main                                                                              0x00095    192
-lcd_display                                                                       0x00155     39
-timer_int0                                                                        0x0017C     14
-external_int0                                                                     0x0018A     10
-put_buff_G100                                                                     0x00194     43
-_print_G100                                                                       0x001BF    294
-sprintf                                                                           0x002E5     49
-_lcd_delay_G101                                                                   0x00316      4
-_lcd_ready                                                                        0x0031A     17
-_lcd_write_nibble_G101                                                            0x0032B      8
-_lcd_write_data                                                                   0x00333     15
-_lcd_read_nibble_G101                                                             0x00342      7
-lcd_read_byte0_G101                                                               0x00349      8
-lcd_gotoxy                                                                        0x00351     18
-lcd_clear                                                                         0x00363     15
-lcd_putchar                                                                       0x00372     38
-lcd_puts                                                                          0x00398     17
-_long_delay_G101                                                                  0x003A9      5
-_lcd_init_write_G101                                                              0x003AE     11
-lcd_init                                                                          0x003B9     51
-strlen                                                                            0x003EC     12
-strlenf                                                                           0x003F8     13
+main                                                                              0x00097    215
+lcd_display                                                                       0x0016E     44
+timer_int0                                                                        0x0019A     14
+external_int0                                                                     0x001A8     10
+put_buff_G100                                                                     0x001B2     43
+_print_G100                                                                       0x001DD    294
+sprintf                                                                           0x00303     49
+_lcd_delay_G101                                                                   0x00334      4
+_lcd_ready                                                                        0x00338     17
+_lcd_write_nibble_G101                                                            0x00349      8
+_lcd_write_data                                                                   0x00351     15
+_lcd_read_nibble_G101                                                             0x00360      7
+lcd_read_byte0_G101                                                               0x00367      8
+lcd_gotoxy                                                                        0x0036F     18
+lcd_clear                                                                         0x00381     15
+lcd_putchar                                                                       0x00390     38
+lcd_puts                                                                          0x003B6     17
+_long_delay_G101                                                                  0x003C7      5
+_lcd_init_write_G101                                                              0x003CC     11
+lcd_init                                                                          0x003D7     51
+strlen                                                                            0x0040A     12
+strlenf                                                                           0x00416     13
