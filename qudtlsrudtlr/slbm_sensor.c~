@@ -78,7 +78,7 @@ void main(void)
         arrow = (PINC.0 & 1);
         arrow = !arrow; 
         if(distance > 30){                          
-            if(key <= 130 || key >= 120){
+            if(key <= 130 && key >= 120){
                 if(arrow){
                     OCR1A = (speed % 255) * (speed % 255);
                     OCR1B = 0;   
@@ -95,53 +95,50 @@ void main(void)
                     OCR3BL = OCR3BL;
                 }      
             }else if(key > 130){          
-                temp = (speed - (key)) * (speed - (key));
-                if((speed - (key)) * (speed - (key)) < 0){
-                    temp = 0;
-                }
+                temp = (speed % 255) * (speed % 255);
                 if(arrow){                                      
-                    OCR1A = temp;                                  
-                    temp = (speed % 255) * (speed % 255);       
-                    OCR1B = 0;   
-                    OCR3BH = OCR1BH; 
-                    OCR3BL = OCR1BL;
+                    //OCR1A = temp;                                  
                     OCR3AH = (temp >> 8); 
                     OCR3AL = temp;     
+                    //temp = (speed % 255) * (speed % 255);       
+                    OCR3BH = OCR3BL = 0;
+                    OCR1B = OCR1A = 0x0;
                 }else{
-                    OCR1B = temp;        
-                    temp = (speed % 255) * (speed % 255);  
-                    OCR1A = 0;
-                    OCR3AH = OCR1BH; 
-                    OCR3AL = OCR1BL;
+                    //OCR1B = temp;  
                     OCR3BH = (temp >> 8); 
-                    OCR3BL = ((temp << 8) >> 8); 
+                    OCR3BL = temp;      
+                    //temp = (speed % 255) * (speed % 255);  
+                    OCR3AH = OCR1BH; 
+                    OCR3AL = OCR1BL;       
+                    OCR1B = OCR1A = 0x0;
+                    //OCR3BH = (temp >> 8); 
+                    //OCR3BL = ((temp << 8) >> 8); 
                 }
-            }else{                
-                temp = (speed - (255 - key) * 2) * (speed - (255 - key) * 2);      
-                if((speed - (255 - key) * 2) * (speed - (255 - key) * 2) < 0){
-                    temp = 0;
-                }
+            }else{                                        
+            temp = (speed % 255) * (speed % 255);
                 if(arrow){                                      
-                    OCR1A = temp;                                  
-                    temp = (speed % 255) * (speed % 255);       
+                    //OCR1A = temp;  
+                    OCR1A = temp;
+                    OCR3AH = OCR3AL = 0x0;                                
+                    //temp = (speed % 255) * (speed % 255);       
                     OCR1B = 0;   
-                    OCR3BH = OCR1BH; 
-                    OCR3BL = OCR1BL;
-                    OCR3AH = (temp >> 8); 
-                    OCR3AL = temp;     
+                    OCR3BH = OCR3AH; 
+                    OCR3BL = OCR3AL;
+                    //OCR3AH = (temp >> 8); 
+                    //OCR3AL = ((temp << 8) >> 8);     
                 }else{
-                    OCR1B = temp;        
-                    temp = (speed % 255) * (speed % 255);  
+                    //OCR1B = temp;
+                    OCR1B = temp;
+                    //OCR3BH = (temp >> 8); 
+                    //OCR3BL = ((temp << 8) >> 8);        
+                    //temp = (speed % 255) * (speed % 255);  
                     OCR1A = 0;
-                    OCR3AH = OCR1BH; 
-                    OCR3AL = OCR1BL;
-                    OCR3BH = (temp >> 8); 
-                    OCR3BL = ((temp << 8) >> 8); 
+                    OCR3AH = OCR3AL = OCR3BH = OCR3BL = 0x0; 
                 }    
             }   
         }else{       
             OCR1A = 0;
-            OCR1B = 255 * 255;
+            OCR1B = 0;
             OCR3BH = OCR1BH; 
             OCR3BL = OCR1BL;
             OCR3AH = OCR1AH; 
