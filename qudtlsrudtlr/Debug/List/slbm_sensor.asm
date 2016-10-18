@@ -1094,16 +1094,16 @@ __DELAY_USW_LOOP:
 	.ENDM
 
 ;NAME DEFINITIONS FOR GLOBAL VARIABLES ALLOCATED TO REGISTERS
-	.DEF _temp=R4
-	.DEF _temp_msb=R5
-	.DEF _count=R6
-	.DEF _count_msb=R7
-	.DEF _distance=R8
-	.DEF _distance_msb=R9
-	.DEF _catch=R10
-	.DEF _catch_msb=R11
-	.DEF _speed=R12
-	.DEF _speed_msb=R13
+	.DEF _count=R4
+	.DEF _count_msb=R5
+	.DEF _distance=R6
+	.DEF _distance_msb=R7
+	.DEF _catch=R8
+	.DEF _catch_msb=R9
+	.DEF _speed=R10
+	.DEF _speed_msb=R11
+	.DEF _key=R12
+	.DEF _key_msb=R13
 
 	.CSEG
 	.ORG 0x00
@@ -1280,7 +1280,7 @@ __GLOBAL_INI_END:
 ;
 ;#define TRIGGER PORTD.1
 ;
-;unsigned short temp;
+;unsigned long temp;
 ;int count, distance, catch, speed, key, i;
 ;char Info[16], arrow;
 ;void lcd_display();
@@ -1322,8 +1322,8 @@ _main:
 	OUT  0x11,R30
 ; 0000 0023     count = TRIGGER = 0;
 	CBI  0x12,1
-	CLR  R6
-	CLR  R7
+	CLR  R4
+	CLR  R5
 ; 0000 0024 
 ; 0000 0025     EIMSK = 0b00000001;
 	LDI  R30,LOW(1)
@@ -1357,7 +1357,7 @@ _0x8:
 	RJMP _0x8
 ; 0000 0031         speed = (int)((((int)ADCL+((int)ADCH<<8))/1024.0)*254); //A/D변환값 읽기
 	RCALL SUBOPT_0x0
-	MOVW R12,R30
+	MOVW R10,R30
 ; 0000 0032 
 ; 0000 0033         ADMUX = 0x01;
 	LDI  R30,LOW(1)
@@ -1370,8 +1370,7 @@ _0xB:
 	RJMP _0xB
 ; 0000 0036         key = (int)((((int)ADCL+((int)ADCH<<8))/1024.0)*254); //A/D변환값 읽기
 	RCALL SUBOPT_0x0
-	STS  _key,R30
-	STS  _key+1,R31
+	MOVW R12,R30
 ; 0000 0037 
 ; 0000 0038         ADCSRA = 0x87;
 	LDI  R30,LOW(135)
@@ -1394,38 +1393,38 @@ _0xB:
 	RCALL _delay_ms
 ; 0000 003F         distance = TRIGGER = 0;
 	CBI  0x12,1
-	CLR  R8
-	CLR  R9
+	CLR  R6
+	CLR  R7
 ; 0000 0040 
 ; 0000 0041         TCCR0 = 0x02;
 	LDI  R30,LOW(2)
 	OUT  0x33,R30
 ; 0000 0042 
 ; 0000 0043         catch = 0;
-	CLR  R10
-	CLR  R11
+	CLR  R8
+	CLR  R9
 ; 0000 0044 
 ; 0000 0045         while(1){
 _0x12:
 ; 0000 0046             if(catch == 1) break;
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
-	CP   R30,R10
-	CPC  R31,R11
+	CP   R30,R8
+	CPC  R31,R9
 	BREQ _0x14
 ; 0000 0047             else if(distance >= 300) break;
 	LDI  R30,LOW(300)
 	LDI  R31,HIGH(300)
-	CP   R8,R30
-	CPC  R9,R31
+	CP   R6,R30
+	CPC  R7,R31
 	BRLT _0x12
 ; 0000 0048         }
 _0x14:
 ; 0000 0049 
 ; 0000 004A         if(count++ < 5000){
-	MOVW R30,R6
+	MOVW R30,R4
 	ADIW R30,1
-	MOVW R6,R30
+	MOVW R4,R30
 	SBIW R30,1
 	CPI  R30,LOW(0x1388)
 	LDI  R26,HIGH(0x1388)
@@ -1434,8 +1433,8 @@ _0x14:
 ; 0000 004B             lcd_display();
 	RCALL _lcd_display
 ; 0000 004C             count = 0;
-	CLR  R6
-	CLR  R7
+	CLR  R4
+	CLR  R5
 ; 0000 004D         }
 ; 0000 004E         arrow = (PINC.0 & 1);
 _0x18:
@@ -1451,200 +1450,202 @@ _0x18:
 ; 0000 0050         if(distance > 30){
 	LDI  R30,LOW(30)
 	LDI  R31,HIGH(30)
-	CP   R30,R8
-	CPC  R31,R9
+	CP   R30,R6
+	CPC  R31,R7
 	BRLT PC+2
 	RJMP _0x19
-; 0000 0051             if(key <= 130 && key >= 120){
+; 0000 0051             temp = (speed % 255) * (speed % 255);
 	RCALL SUBOPT_0x1
-	CPI  R26,LOW(0x83)
-	LDI  R30,HIGH(0x83)
-	CPC  R27,R30
-	BRGE _0x1B
-	RCALL SUBOPT_0x1
-	CPI  R26,LOW(0x78)
-	LDI  R30,HIGH(0x78)
-	CPC  R27,R30
+	RCALL __CWD1
+	STS  _temp,R30
+	STS  _temp+1,R31
+	STS  _temp+2,R22
+	STS  _temp+3,R23
+; 0000 0052             if(key <= 130 && key >= 120){
+	RCALL SUBOPT_0x2
+	BRLT _0x1B
+	LDI  R30,LOW(120)
+	LDI  R31,HIGH(120)
+	CP   R12,R30
+	CPC  R13,R31
 	BRGE _0x1C
 _0x1B:
 	RJMP _0x1A
 _0x1C:
-; 0000 0052                 if(arrow){
+; 0000 0053                 if(arrow){
 	LDS  R30,_arrow
 	CPI  R30,0
 	BREQ _0x1D
-; 0000 0053                     OCR1A = (speed % 255) * (speed % 255);
-	RCALL SUBOPT_0x2
+; 0000 0054                     OCR1A = (speed % 255) * (speed % 255);
+	RCALL SUBOPT_0x1
 	RCALL SUBOPT_0x3
-; 0000 0054                     OCR1B = 0;
-; 0000 0055                     OCR3BH = OCR1BH;
-; 0000 0056                     OCR3BL = OCR1BL;
-; 0000 0057                     OCR3AH = OCR1AH;
-; 0000 0058                     OCR3AL = OCR1AL;
-; 0000 0059                 }else{
+; 0000 0055                     OCR1B = 0;
+; 0000 0056                     OCR3BH = OCR1BH;
+; 0000 0057                     OCR3BL = OCR1BL;
+; 0000 0058                     OCR3AH = OCR1AH;
+; 0000 0059                     OCR3AL = OCR1AL;
+; 0000 005A                 }else{
 	RJMP _0x1E
 _0x1D:
-; 0000 005A                     OCR1A = 0;
+; 0000 005B                     OCR1A = 0;
 	RCALL SUBOPT_0x4
-; 0000 005B                     OCR1B =  (speed % 255) * (speed % 255);
-	RCALL SUBOPT_0x2
+; 0000 005C                     OCR1B =  (speed % 255) * (speed % 255);
+	RCALL SUBOPT_0x1
 	OUT  0x28+1,R31
 	OUT  0x28,R30
-; 0000 005C                     OCR3AH = OCR1AH;
-	IN   R30,0x2B
-	STS  135,R30
-; 0000 005D                     OCR3AL = OCR1AL;
-	IN   R30,0x2A
-	STS  134,R30
-; 0000 005E                     OCR3BH = OCR1BH;
+; 0000 005D                     OCR3AH = OCR1AH;
+	RCALL SUBOPT_0x5
+; 0000 005E                     OCR3AL = OCR1AL;
+; 0000 005F                     OCR3BH = OCR1BH;
 	IN   R30,0x29
 	STS  133,R30
-; 0000 005F                     OCR3BL = OCR3BL;
+; 0000 0060                     OCR3BL = OCR3BL;
 	LDS  R30,132
 	STS  132,R30
-; 0000 0060                 }
+; 0000 0061                 }
 _0x1E:
-; 0000 0061             }else if(key > 130){
+; 0000 0062             }else if(key > 130){
 	RJMP _0x1F
 _0x1A:
-	RCALL SUBOPT_0x1
-	CPI  R26,LOW(0x83)
-	LDI  R30,HIGH(0x83)
-	CPC  R27,R30
-	BRLT _0x20
-; 0000 0062                 temp = 0xffff;
-	LDI  R30,LOW(65535)
-	LDI  R31,HIGH(65535)
-	RCALL SUBOPT_0x5
+	RCALL SUBOPT_0x2
+	BRGE _0x20
 ; 0000 0063                 if(arrow){
+	LDS  R30,_arrow
+	CPI  R30,0
 	BREQ _0x21
-; 0000 0064                     //OCR1A = temp;
-; 0000 0065                     OCR3AH = (temp >> 8);
-	STS  135,R5
-; 0000 0066                     OCR3AL = temp;
-	STS  134,R4
-; 0000 0067                     //temp = (speed % 255) * (speed % 255);
-; 0000 0068                     OCR3BH = OCR3BL = 0;
+; 0000 0064                     OCR1B = temp;
 	RCALL SUBOPT_0x6
-; 0000 0069                     OCR1B = OCR1A = 0x0;
-	RJMP _0x29
-; 0000 006A                 }else{
+	OUT  0x28+1,R31
+	OUT  0x28,R30
+; 0000 0065                     //OCR3BH = (temp >> 8);
+; 0000 0066                     //OCR3BL = ((temp << 8) >> 8);
+; 0000 0067                     //temp = (speed % 255) * (speed % 255);
+; 0000 0068                     OCR1A = 0;
+	RCALL SUBOPT_0x4
+; 0000 0069                     OCR3AH = OCR3AL = OCR3BH = OCR3BL = 0x0;
+	RCALL SUBOPT_0x7
+; 0000 006A 
+; 0000 006B                 }else{
+	RJMP _0x22
 _0x21:
-; 0000 006B                     //OCR1B = temp;
-; 0000 006C                     OCR3BH = (temp >> 8);
-	STS  133,R5
-; 0000 006D                     OCR3BL = temp;
-	STS  132,R4
-; 0000 006E                     //temp = (speed % 255) * (speed % 255);
-; 0000 006F                     OCR3AH = OCR1BH;
-	IN   R30,0x29
-	STS  135,R30
-; 0000 0070                     OCR3AL = OCR1BL;
-	IN   R30,0x28
-	STS  134,R30
-; 0000 0071                     OCR1B = OCR1A = 0x0;
-_0x29:
-	LDI  R30,LOW(0)
-	LDI  R31,HIGH(0)
+; 0000 006C 
+; 0000 006D                     OCR1A = temp;
+	RCALL SUBOPT_0x6
 	OUT  0x2A+1,R31
 	OUT  0x2A,R30
+; 0000 006E                     OCR3AH = OCR1AH;
+	RCALL SUBOPT_0x5
+; 0000 006F                     OCR3AL =OCR1AL;
+; 0000 0070                     OCR1B = OCR1A = 0;
+	RCALL SUBOPT_0x4
 	OUT  0x28+1,R31
 	OUT  0x28,R30
-; 0000 0072                     //OCR3BH = (temp >> 8);
-; 0000 0073                     //OCR3BL = ((temp << 8) >> 8);
-; 0000 0074                 }
-; 0000 0075             }else{
+; 0000 0071                     //temp = (speed % 255) * (speed % 255);
+; 0000 0072                     OCR3BH = OCR1BH;
+	IN   R30,0x29
+	STS  133,R30
+; 0000 0073                     OCR3BL = OCR1BL;
+	IN   R30,0x28
+	STS  132,R30
+; 0000 0074                     //OCR3BH = (temp >> 8);
+; 0000 0075                     //OCR3BL = ((temp << 8) >> 8);
+; 0000 0076                 }
+_0x22:
+; 0000 0077             }else{
 	RJMP _0x23
 _0x20:
-; 0000 0076             temp = (speed % 255) * (speed % 255);
-	RCALL SUBOPT_0x2
-	RCALL SUBOPT_0x5
-; 0000 0077                 if(arrow){
+; 0000 0078                 if(arrow){
+	LDS  R30,_arrow
+	CPI  R30,0
 	BREQ _0x24
-; 0000 0078                     //OCR1A = temp;
-; 0000 0079                     OCR1A = temp;
-	__OUTWR 4,5,42
-; 0000 007A                     OCR3AH = OCR3AL = 0x0;
+; 0000 0079                     //OCR1A = temp;
+; 0000 007A                     OCR1A = temp;
+	RCALL SUBOPT_0x6
+	OUT  0x2A+1,R31
+	OUT  0x2A,R30
+; 0000 007B                     OCR3AH = OCR3AL = 0x0;
 	LDI  R30,LOW(0)
-	RCALL SUBOPT_0x7
-; 0000 007B                     //temp = (speed % 255) * (speed % 255);
-; 0000 007C                     OCR1B = 0;
+	STS  134,R30
+	STS  135,R30
+; 0000 007C                     //temp = (speed % 255) * (speed % 255);
+; 0000 007D                     OCR1B = 0;
 	LDI  R30,LOW(0)
 	LDI  R31,HIGH(0)
 	OUT  0x28+1,R31
 	OUT  0x28,R30
-; 0000 007D                     OCR3BH = OCR3AH;
+; 0000 007E                     OCR3BH = OCR3AH;
 	LDS  R30,135
 	STS  133,R30
-; 0000 007E                     OCR3BL = OCR3AL;
+; 0000 007F                     OCR3BL = OCR3AL;
 	LDS  R30,134
 	STS  132,R30
-; 0000 007F                     //OCR3AH = (temp >> 8);
-; 0000 0080                     //OCR3AL = ((temp << 8) >> 8);
-; 0000 0081                 }else{
+; 0000 0080                     //OCR3AH = (temp >> 8);
+; 0000 0081                     //OCR3AL = ((temp << 8) >> 8);
+; 0000 0082                 }else{
 	RJMP _0x25
 _0x24:
-; 0000 0082                     //OCR1B = temp;
-; 0000 0083                     OCR1B = temp;
-	__OUTWR 4,5,40
-; 0000 0084                     //OCR3BH = (temp >> 8);
-; 0000 0085                     //OCR3BL = ((temp << 8) >> 8);
-; 0000 0086                     //temp = (speed % 255) * (speed % 255);
-; 0000 0087                     OCR1A = 0;
-	RCALL SUBOPT_0x4
-; 0000 0088                     OCR3AH = OCR3AL = OCR3BH = OCR3BL = 0x0;
+; 0000 0083                     //OCR1B = temp;
+; 0000 0084                     OCR1B = temp;
 	RCALL SUBOPT_0x6
+	OUT  0x28+1,R31
+	OUT  0x28,R30
+; 0000 0085                     //OCR3BH = (temp >> 8);
+; 0000 0086                     //OCR3BL = ((temp << 8) >> 8);
+; 0000 0087                     //temp = (speed % 255) * (speed % 255);
+; 0000 0088                     OCR1A = 0;
+	RCALL SUBOPT_0x4
+; 0000 0089                     OCR3AH = OCR3AL = OCR3BH = OCR3BL = 0x0;
 	RCALL SUBOPT_0x7
-; 0000 0089                 }
+; 0000 008A                 }
 _0x25:
-; 0000 008A             }
+; 0000 008B             }
 _0x23:
 _0x1F:
-; 0000 008B         }else{
+; 0000 008C         }else{
 	RJMP _0x26
 _0x19:
-; 0000 008C             OCR1A = 0;
+; 0000 008D             OCR1A = 0;
 	LDI  R30,LOW(0)
 	LDI  R31,HIGH(0)
 	RCALL SUBOPT_0x3
-; 0000 008D             OCR1B = 0;
-; 0000 008E             OCR3BH = OCR1BH;
-; 0000 008F             OCR3BL = OCR1BL;
-; 0000 0090             OCR3AH = OCR1AH;
-; 0000 0091             OCR3AL = OCR1AL;
-; 0000 0092             delay_ms(1000);
+; 0000 008E             OCR1B = 0;
+; 0000 008F             OCR3BH = OCR1BH;
+; 0000 0090             OCR3BL = OCR1BL;
+; 0000 0091             OCR3AH = OCR1AH;
+; 0000 0092             OCR3AL = OCR1AL;
+; 0000 0093             delay_ms(1000);
 	LDI  R26,LOW(1000)
 	LDI  R27,HIGH(1000)
 	RCALL _delay_ms
-; 0000 0093         }
+; 0000 0094         }
 _0x26:
-; 0000 0094     }
+; 0000 0095     }
 	RJMP _0x5
-; 0000 0095 }
+; 0000 0096 }
 _0x27:
 	RJMP _0x27
 ; .FEND
 ;
 ;void lcd_display()
-; 0000 0098 {
+; 0000 0099 {
 _lcd_display:
 ; .FSTART _lcd_display
-; 0000 0099     lcd_clear();
+; 0000 009A     lcd_clear();
 	RCALL _lcd_clear
-; 0000 009A     lcd_gotoxy(0,0);
+; 0000 009B     lcd_gotoxy(0,0);
 	LDI  R30,LOW(0)
 	ST   -Y,R30
 	LDI  R26,LOW(0)
 	RCALL _lcd_gotoxy
-; 0000 009B     lcd_puts("DIS, SPE, ANG");
+; 0000 009C     lcd_puts("DIS, SPE, ANG");
 	__POINTW2MN _0x28,0
 	RCALL _lcd_puts
-; 0000 009C     lcd_gotoxy(0,1);
+; 0000 009D     lcd_gotoxy(0,1);
 	LDI  R30,LOW(0)
 	ST   -Y,R30
 	LDI  R26,LOW(1)
 	RCALL _lcd_gotoxy
-; 0000 009D     sprintf(Info, "%3d, %3d, %3d %d",distance, speed, key, PINC);
+; 0000 009E     sprintf(Info, "%3d, %3d, %3d %d",distance, speed, key, PINC);
 	LDI  R30,LOW(_Info)
 	LDI  R31,HIGH(_Info)
 	ST   -Y,R31
@@ -1652,14 +1653,13 @@ _lcd_display:
 	__POINTW1FN _0x0,14
 	ST   -Y,R31
 	ST   -Y,R30
-	MOVW R30,R8
+	MOVW R30,R6
+	RCALL __CWD1
+	RCALL __PUTPARD1
+	MOVW R30,R10
 	RCALL __CWD1
 	RCALL __PUTPARD1
 	MOVW R30,R12
-	RCALL __CWD1
-	RCALL __PUTPARD1
-	LDS  R30,_key
-	LDS  R31,_key+1
 	RCALL __CWD1
 	RCALL __PUTPARD1
 	IN   R30,0x13
@@ -1670,12 +1670,12 @@ _lcd_display:
 	LDI  R24,16
 	RCALL _sprintf
 	ADIW R28,20
-; 0000 009E     lcd_puts(Info);
+; 0000 009F     lcd_puts(Info);
 	LDI  R26,LOW(_Info)
 	LDI  R27,HIGH(_Info)
 	RCALL _lcd_puts
-; 0000 009F 
-; 0000 00A0 }
+; 0000 00A0 
+; 0000 00A1 }
 	RET
 ; .FEND
 
@@ -1684,7 +1684,7 @@ _0x28:
 	.BYTE 0xE
 ;
 ;interrupt [TIM0_OVF] void timer_int0(void){
-; 0000 00A2 interrupt [17] void timer_int0(void){
+; 0000 00A3 interrupt [17] void timer_int0(void){
 
 	.CSEG
 _timer_int0:
@@ -1693,14 +1693,14 @@ _timer_int0:
 	ST   -Y,R31
 	IN   R30,SREG
 	ST   -Y,R30
-; 0000 00A3     TCNT0 = 139;
+; 0000 00A4     TCNT0 = 139;
 	LDI  R30,LOW(139)
 	OUT  0x32,R30
-; 0000 00A4     distance++;
-	MOVW R30,R8
+; 0000 00A5     distance++;
+	MOVW R30,R6
 	ADIW R30,1
-	MOVW R8,R30
-; 0000 00A5 }
+	MOVW R6,R30
+; 0000 00A6 }
 	LD   R30,Y+
 	OUT  SREG,R30
 	LD   R31,Y+
@@ -1709,20 +1709,20 @@ _timer_int0:
 ; .FEND
 ;
 ;interrupt [EXT_INT0] void external_int0(void)
-; 0000 00A8 {
+; 0000 00A9 {
 _external_int0:
 ; .FSTART _external_int0
 	ST   -Y,R30
 	ST   -Y,R31
-; 0000 00A9 
-; 0000 00AA     TCCR0 = 0x0;
+; 0000 00AA 
+; 0000 00AB     TCCR0 = 0x0;
 	LDI  R30,LOW(0)
 	OUT  0x33,R30
-; 0000 00AB     catch = 1;
+; 0000 00AC     catch = 1;
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
-	MOVW R10,R30
-; 0000 00AC }
+	MOVW R8,R30
+; 0000 00AD }
 	LD   R31,Y+
 	LD   R30,Y+
 	RETI
@@ -2517,8 +2517,8 @@ strlenf1:
 ; .FEND
 
 	.DSEG
-_key:
-	.BYTE 0x2
+_temp:
+	.BYTE 0x4
 _Info:
 	.BYTE 0x10
 _arrow:
@@ -2554,21 +2554,23 @@ SUBOPT_0x0:
 	RCALL __CFD1
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:4 WORDS
-SUBOPT_0x1:
-	LDS  R26,_key
-	LDS  R27,_key+1
-	RET
-
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:10 WORDS
-SUBOPT_0x2:
-	MOVW R26,R12
+SUBOPT_0x1:
+	MOVW R26,R10
 	LDI  R30,LOW(255)
 	LDI  R31,HIGH(255)
 	RCALL __MODW21
 	MOVW R22,R30
 	MOVW R26,R22
 	RCALL __MULW12
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
+SUBOPT_0x2:
+	LDI  R30,LOW(130)
+	LDI  R31,HIGH(130)
+	CP   R30,R12
+	CPC  R31,R13
 	RET
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:15 WORDS
@@ -2589,7 +2591,7 @@ SUBOPT_0x3:
 	STS  134,R30
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:7 WORDS
 SUBOPT_0x4:
 	LDI  R30,LOW(0)
 	LDI  R31,HIGH(0)
@@ -2597,22 +2599,25 @@ SUBOPT_0x4:
 	OUT  0x2A,R30
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:3 WORDS
 SUBOPT_0x5:
-	MOVW R4,R30
-	LDS  R30,_arrow
-	CPI  R30,0
+	IN   R30,0x2B
+	STS  135,R30
+	IN   R30,0x2A
+	STS  134,R30
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:2 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:7 WORDS
 SUBOPT_0x6:
+	LDS  R30,_temp
+	LDS  R31,_temp+1
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:6 WORDS
+SUBOPT_0x7:
 	LDI  R30,LOW(0)
 	STS  132,R30
 	STS  133,R30
-	RET
-
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x7:
 	STS  134,R30
 	STS  135,R30
 	RET

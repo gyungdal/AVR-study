@@ -16,7 +16,7 @@
 
 #define TRIGGER PORTD.1
 
-unsigned short temp;
+unsigned long temp;
 int count, distance, catch, speed, key, i;    
 char Info[16], arrow;
 void lcd_display();
@@ -77,7 +77,8 @@ void main(void)
         }       
         arrow = (PINC.0 & 1);
         arrow = !arrow; 
-        if(distance > 30){                          
+        if(distance > 30){                  
+            temp = (speed % 255) * (speed % 255);              
             if(key <= 130 && key >= 120){
                 if(arrow){
                     OCR1A = (speed % 255) * (speed % 255);
@@ -94,28 +95,28 @@ void main(void)
                     OCR3BH = OCR1BH;
                     OCR3BL = OCR3BL;
                 }      
-            }else if(key > 130){          
-                temp = 0xffff;
-                if(arrow){                                      
-                    //OCR1A = temp;                                  
-                    OCR3AH = (temp >> 8); 
-                    OCR3AL = temp;     
-                    //temp = (speed % 255) * (speed % 255);       
-                    OCR3BH = OCR3BL = 0;
-                    OCR1B = OCR1A = 0x0;
-                }else{
-                    //OCR1B = temp;  
-                    OCR3BH = (temp >> 8); 
-                    OCR3BL = temp;      
+            }else if(key > 130){    
+                if(arrow){             
+                    OCR1B = temp;
+                    //OCR3BH = (temp >> 8); 
+                    //OCR3BL = ((temp << 8) >> 8);        
                     //temp = (speed % 255) * (speed % 255);  
-                    OCR3AH = OCR1BH; 
-                    OCR3AL = OCR1BL;       
-                    OCR1B = OCR1A = 0x0;
+                    OCR1A = 0;
+                    OCR3AH = OCR3AL = OCR3BH = OCR3BL = 0x0; 
+                   
+                }else{
+                    
+                    OCR1A = temp;  
+                    OCR3AH = OCR1AH; 
+                    OCR3AL =OCR1AL;      
+                    OCR1B = OCR1A = 0;
+                    //temp = (speed % 255) * (speed % 255);  
+                    OCR3BH = OCR1BH; 
+                    OCR3BL = OCR1BL;    
                     //OCR3BH = (temp >> 8); 
                     //OCR3BL = ((temp << 8) >> 8); 
                 }
-            }else{                                        
-            temp = (speed % 255) * (speed % 255);
+            }else{                                  
                 if(arrow){                                      
                     //OCR1A = temp;  
                     OCR1A = temp;
