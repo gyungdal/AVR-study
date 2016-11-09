@@ -18,22 +18,25 @@ char getch();
 void lcd_display(char data);
 
 char* test = "GyungDal";
-char temp[16];
+char temp[16], recv;
 void main(void){
     lcd_init(16);
     lcd_clear(); 
     lcd_gotoxy(0,0); 
     lcd_puts("TEST!!!");
+    lcd_gotoxy(0,1);
     UCSR0A = 0x0;
     UCSR0B = 0b00011000;
     UCSR0C = 0b00000110;
     UBRR0H = 0x0;
     UBRR0L = 103;      
      
-   while(*test){
-        putch(*test++);
-        lcd_display(getch());
-        delay_ms(100);
+   while(true){
+       recv = getch();
+       if(recv == 'a'){
+           putch('b');
+        }
+        lcd_display(recv);
     }
 }
 
@@ -50,6 +53,9 @@ char getch(){
 
                             
 void lcd_display(char data){
+    lcd_clear(); 
+    lcd_gotoxy(0,0); 
+    lcd_puts("TEST!");
     lcd_gotoxy(0,1);
     lcd_putchar(data);
 }
