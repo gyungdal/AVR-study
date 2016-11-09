@@ -1,0 +1,11 @@
+VERSION:3 SOURCE_TIMESTAMP:496962C3
+NODE:I LEVEL:0 LINE:8 "C:\cvavreval\inc\io.h"
+NODE:I LEVEL:0 LINE:9 "C:\cvavreval\inc\delay.h"
+NODE:I LEVEL:0 LINE:10 "C:\cvavreval\inc\stdio.h"
+NODE:I LEVEL:0 LINE:11 "C:\cvavreval\inc\lcd.h"
+NODE:V LEVEL:0 LINE:20 "*test -> R4,R5"
+NODE:V LEVEL:0 LINE:21 "temp -> RAM:????"
+NODE:F LEVEL:0 LINE:22 "main(void)"
+NODE:F LEVEL:0 LINE:40 "putch(unsigned char data)"
+NODE:F LEVEL:0 LINE:45 "getch(void)"
+NODE:F LEVEL:0 LINE:51 "lcd_display(unsigned char data)"
